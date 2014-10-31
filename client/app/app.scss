@@ -8,6 +8,25 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
  * App-wide Styles
  */
 
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 100px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 100px;
+  background-color: #f5f5f5;
+}
+
 .browsehappy {
     margin: 0.2em 0;
     background: #ccc;
@@ -17,7 +36,7 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
 
 // Component styles are injected through grunt
 // injector
-@import 'account/login/login.scss';
-@import 'admin/admin.scss';
 @import 'main/main.scss';
+@import 'player/player.scss';
+@import 'modal/modal.scss';
 // endinjector
