@@ -12,11 +12,19 @@ angular.module('sessionCamReplayApp')
 
         function loadSession() {
           var session = scope.sessions[Math.floor(Math.random() * scope.sessions.length)];
-          scope.currentProjectUrl = $sce.trustAsResourceUrl(session.url);
-          $timeout(loadSession, session.duration);
+          if ( session ) {
+            scope.currentProjectUrl = $sce.trustAsResourceUrl(session.url);
+            $timeout(loadSession, session.duration);
+          }
         }
 
-        loadSession();
+        // This doesn't get fired from socket.io for some reason
+        scope.$watch('sessions', function (newValue) {
+          if ( newValue.length > 0 ) {
+            loadSession();
+          }
+        });
+
       }
     };
   });

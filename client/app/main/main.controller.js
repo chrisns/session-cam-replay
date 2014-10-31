@@ -2,23 +2,26 @@
 
 angular.module('sessionCamReplayApp')
   .controller('MainCtrl', function ($scope, $http, socket) {
-    $scope.sessions = [
-      { url: 'http://www.sessioncam.com', duration: 10000 },
-      { url: 'http://www.everline.com', duration: 10000 },
-      { url: 'http://waww.com.au', duration: 10000 }
-    ];
+    $scope.sessions = [];
+
+    $scope.newSession = 'http://icanhazip.com';
+    $scope.newSessionTime = 10000;
 
     $http.get('/api/sessions').success(function(sessions) {
       $scope.sessions = sessions;
-      socket.syncUpdates('sessions', $scope.sessions);
+      socket.syncUpdates('session', $scope.sessions);
     });
 
     $scope.addSession = function() {
-      if($scope.newSession === '') {
+      if ($scope.newSession === '') {
         return;
       }
-      $http.post('/api/sessions', { name: $scope.newSession });
+      $http.post('/api/sessions', {
+        url: $scope.newSession,
+        duration: $scope.newSessionTime
+      });
       $scope.newSession = '';
+      $scope.newSessionTime = '';
     };
 
     $scope.deleteThing = function(session) {
@@ -26,6 +29,6 @@ angular.module('sessionCamReplayApp')
     };
 
     $scope.$on('$destroy', function () {
-      socket.unsyncUpdates('sessions');
+      socket.unsyncUpdates('session');
     });
   });

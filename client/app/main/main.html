@@ -7,6 +7,13 @@
 <section>
   <div class="container">
     <div player sessions="sessions">Loading up the fun</div>
+
+    <h1>Sessions</h1>
+    <ul>
+      <li ng-repeat="session in sessions">
+        {{session.url}}
+      </li>
+    </ul>
   </div>
 </section>
 
