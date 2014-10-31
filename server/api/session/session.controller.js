@@ -37,6 +37,14 @@ exports.create = function(req, res) {
   });
 };
 
+// Creates a new thing in the DB.
+exports.receive = function(req, res) {
+  Session.create(req.params.TransactionWrapper, function(err, session) {
+    if(err) { return handleError(res, err); }
+    return res.json(201, session);
+  });
+};
+
 // Updates an existing thing in the DB.
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
