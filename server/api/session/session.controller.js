@@ -39,7 +39,8 @@ exports.create = function(req, res) {
 
 // Creates a new thing in the DB.
 exports.receive = function(req, res) {
-  Session.create(req.params.TransactionWrapper, function(err, session) {
+  var json = JSON.parse(req.body.TransactionWrapper);
+  Session.create(json, function(err, session) {
     if(err) { return handleError(res, err); }
     return res.json(201, session);
   });

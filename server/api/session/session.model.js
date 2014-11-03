@@ -5,7 +5,11 @@ var mongoose = require('mongoose'),
 
 var SessionSchema = new Schema({
   url: String,
-  duration: Number
+  duration: Number,
+  ContentWrappers: Schema.Types.Mixed,
+  SentDate: Date,
+  TransactionId: String,
+  Version: Number
 });
 
 module.exports = mongoose.model('Session', SessionSchema);
