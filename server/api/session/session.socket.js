@@ -8,7 +8,7 @@ var session = require('./session.model.js');
 
 exports.register = function(socket) {
   session.schema.post('save', function (doc) {
-    onSave(socket, doc);
+    onSave(socket, session.transformSessionCams([doc])[0]);
   });
   session.schema.post('remove', function (doc) {
     onRemove(socket, doc);

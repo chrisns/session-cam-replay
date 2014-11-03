@@ -16,6 +16,7 @@ var Session = require('./session.model.js');
 exports.index = function(req, res) {
   Session.find(function (err, sessions) {
     if(err) { return handleError(res, err); }
+    sessions = Session.transformSessionCams(sessions);
     return res.json(200, sessions);
   });
 };
