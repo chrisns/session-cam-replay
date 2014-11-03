@@ -5,7 +5,7 @@
 'use strict';
 
 var express = require('express');
-var https = require('https');
+var httpProxy = require('http-proxy');
 var fs = require('fs');
 var favicon = require('serve-favicon');
 var morgan = require('morgan');
@@ -19,6 +19,42 @@ var config = require('./environment');
 
 module.exports = function(app) {
   var env = app.get('env');
+
+  var proxy = httpProxy.createProxy();
+  app.use('/sc',   function (req, res, next) {
+
+    var _write = res.write;
+    res.write = function (data) {
+      data = data.toString();
+      data = data.replace(/href="\//g, "href=\"/sc/");
+      data = data.replace(/src="\//g, "src=\"/sc/");
+      _write.call(res, data);
+    };
+
+    var _writeHead = res.writeHead;
+    res.writeHead = function (data) {
+
+      var location;
+      if (location = this.getHeader('location')) {
+        this.setHeader('location', '/sc' + location);
+      }
+
+      var cookie;
+      if (cookie = this.getHeader('set-cookie')) {
+        this.setHeader('set-cookie', cookie.toString().replace('secure', ''));
+      }
+
+      // Call the original method !!! see text
+      _writeHead.apply(this, arguments);
+    };
+
+    next();
+  });
+  app.use('/sc', function(req, res) {
+    proxy.web(req, res, {
+      target: 'https://console.sessioncam.com'
+    });
+  });
 
   app.set('views', config.root + '/server/views');
   app.engine('html', require('ejs').renderFile);
