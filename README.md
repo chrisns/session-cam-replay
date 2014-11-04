@@ -19,6 +19,8 @@ Startup
   # https://<domain>/replay/api/sessions/receive
 4. Go to https://localhost:8000/replay/
 
+You can debug incoming sessions from https://www.runscope.com/passageway/yjky3ycny91o
+
 TODO
 ====
 Auto play
