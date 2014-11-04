@@ -17,14 +17,19 @@ angular.module('sessionCamReplayApp')
           // Get a random session that isn't the current one
           do {
             var randomSession = scope.sessions[Math.floor(Math.random() * scope.sessions.length)];
-          } while (randomSession == session);
+          } while (randomSession.url == session);
 
 
-          session = randomSession;
-          $log.info('Loading ' + session.url + ' for ' + session.duration + ' seconds');
-          scope.currentProjectUrl = $sce.trustAsResourceUrl(session.url);
+          session = randomSession.url;
+          $log.info('Loading ' + session);
+          scope.currentProjectUrl = $sce.trustAsResourceUrl(session);
           scope.$apply();
         }
+
+        var throttled = _.debounce(loadSession, 10000, {
+          leading: true,
+          trailing: false
+        });
 
         $window.sessionCamPlayer = {
           frameLoaded: function () {
@@ -38,9 +43,6 @@ angular.module('sessionCamReplayApp')
 
             // Hook into when the playback is finished.
             var _showSessionPlaybackFinished = p.showSessionPlaybackFinished;
-            var throttled = _.debounce(loadSession, 10000, {
-              leading: true
-            });
             p.showSessionPlaybackFinished = function () {
               $log.info('showSessionPlaybackFinished()');
               throttled();
