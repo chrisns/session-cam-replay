@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <base href="/">
+    <base href="/replay/">
     <title>Session Cam Replay</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
@@ -56,7 +56,6 @@
       <script src="bower_components/angular-socket-io/socket.js"></script>
       <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
       <!-- endbower -->
-      <script src="socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
 
         <!-- build:js({.tmp,client}) app/app.js -->
@@ -67,8 +66,16 @@
           <script src="app/player/player.directive.js"></script>
           <script src="components/modal/modal.service.js"></script>
           <script src="components/navbar/navbar.controller.js"></script>
-          <script src="components/socket/socket.service.js"></script>
           <!-- endinjector -->
         <!-- endbuild -->
-</body>
+
+    <script>
+      var sessionCamPlayer = {
+        frameLoaded: function () {
+          return window.frames[0].sessionCamPlayer.frameLoaded();
+        }
+      }
+    </script>
+
+  </body>
 </html>

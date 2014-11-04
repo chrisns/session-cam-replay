@@ -19,10 +19,11 @@ angular.module('sessionCamReplayApp')
           }
         }
 
-        // This doesn't get fired from socket.io for some reason
-        scope.$watch('sessions', function (newValue) {
+        // When we get sessions start the randomisation
+        var sessionWatch = scope.$watch('sessions', function (newValue) {
           if ( newValue.length > 0 ) {
             loadSession();
+            sessionWatch();
           }
         });
 

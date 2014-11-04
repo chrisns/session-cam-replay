@@ -29,8 +29,7 @@ Session.transformSessionCams = function(sessions) {
 
     // URL - https://console.sessioncam.com/Dashboard/Playback/?SessionId=ceefdc1c-b184-4eb0-950c-8ced80f46e64&starttime=635499082780000000
     var playbackUrl = (function () {
-      var playbackUrl = url.parse('//console.sessioncam.com/Dashboard/Playback/');
-      console.log(Date.parse(session.UTCStartDateTime));
+      var playbackUrl = url.parse('https://localhost:8000/Dashboard/Playback/');
       playbackUrl.query = {
         SessionId: session.SessionId,
         starttime: ((Date.parse(session.UTCStartDateTime) / 1000) + 62135636400) * 10000000

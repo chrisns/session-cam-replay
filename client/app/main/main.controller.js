@@ -1,22 +1,26 @@
 'use strict';
 
 angular.module('sessionCamReplayApp')
-  .controller('MainCtrl', function ($scope, $http, socket) {
+  .controller('MainCtrl', function ($scope, $http, $interval) {
     $scope.sessions = [];
 
     $scope.newSession = 'http://icanhazip.com';
     $scope.newSessionTime = 10000;
 
-    $http.get('/api/sessions').success(function(sessions) {
-      $scope.sessions = sessions;
-      socket.syncUpdates('session', $scope.sessions);
-    });
+    function loadSessions() {
+      console.log('loading sessions');
+      $http.get('api/sessions').success(function(sessions) {
+        $scope.sessions = sessions;
+      });
+    }
+    $interval(loadSessions, 60000);
+    loadSessions();
 
     $scope.addSession = function() {
       if ($scope.newSession === '') {
         return;
       }
-      $http.post('/api/sessions', {
+      $http.post('api/sessions', {
         url: $scope.newSession,
         duration: $scope.newSessionTime
       });
@@ -25,10 +29,9 @@ angular.module('sessionCamReplayApp')
     };
 
     $scope.deleteThing = function(session) {
-      $http.delete('/api/sessions/' + session._id);
+      $http.delete('api/sessions/' + session._id);
     };
 
     $scope.$on('$destroy', function () {
-      socket.unsyncUpdates('session');
     });
   });
