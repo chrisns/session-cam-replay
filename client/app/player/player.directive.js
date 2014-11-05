@@ -1,5 +1,19 @@
 'use strict';
 
+// http://me.dt.in.th/page/JavaScript-override/
+function override(object, methodName, callback) {
+  object[methodName] = callback(object[methodName])
+}
+function after(extraBehavior) {
+  return function(original) {
+    return function() {
+      var returnValue = original.apply(this, arguments)
+      extraBehavior.apply(this, arguments)
+      return returnValue
+    }
+  }
+}
+
 angular.module('sessionCamReplayApp')
   .directive('player', function ($sce, $timeout, $log, $window) {
     return {
@@ -31,9 +45,17 @@ angular.module('sessionCamReplayApp')
           trailing: false
         });
 
+        var onSessionEnd = after(function() {
+          $log.info('showSessionPlaybackFinished()');
+          throttled();
+        });
+
         $window.sessionCamPlayer = {
           frameLoaded: function () {
+
+            // Shortcut variables
             var p = $window.frames[0].sessionCamPlayer;
+            var i$ = $window.frames[0].$;
 
             // Run the original function but return it later..
             var result = p.frameLoaded();
@@ -42,12 +64,12 @@ angular.module('sessionCamReplayApp')
             $window.frames[0].sessionCamPlayer.play();
 
             // Hook into when the playback is finished.
-            var _showSessionPlaybackFinished = p.showSessionPlaybackFinished;
-            p.showSessionPlaybackFinished = function () {
-              $log.info('showSessionPlaybackFinished()');
-              throttled();
-              _showSessionPlaybackFinished();
-            };
+            override(p, 'showSessionPlaybackFinished', onSessionEnd);
+            override(p, 'showSessionNotReady', onSessionEnd);
+            override(p, 'showEventTooBigMessage', onSessionEnd);
+
+            // Hide parts of the interace
+            i$('#playbackControlsStrip,#secondNavStrip,#main-nav,#topbar,#bottomBarStrip').hide();
 
             // Return original method
             return result;
