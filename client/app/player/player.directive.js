@@ -24,9 +24,12 @@ angular.module('sessionCamReplayApp')
       },
       link: function (scope, element, attrs) {
 
-        var session;
+        var session, reloadIfStoppedTimeout;
+
         function loadSession() {
+
           $log.info('loadSession()');
+          $timeout.cancel(reloadIfStoppedTimeout);
 
           // Get a random session that isn't the current one
           do {
@@ -38,9 +41,16 @@ angular.module('sessionCamReplayApp')
           $log.info('Loading ' + session);
           scope.currentProjectUrl = $sce.trustAsResourceUrl(session);
           scope.$apply();
+
+          // Backup for next session if hijacking the player methods below doesn't
+          // work. If it does work this timeout is cancelled at start of method
+          reloadIfStoppedTimeout = $timeout(function () {
+            $log.info('reloadIfStopped');
+            loadSession();
+          }, randomSession.duration);
         }
 
-        var throttled = _.debounce(loadSession, 10000, {
+        var throttled = _.debounce(loadSession, 1000, {
           leading: true,
           trailing: false
         });
@@ -68,7 +78,7 @@ angular.module('sessionCamReplayApp')
             override(p, 'showSessionNotReady', onSessionEnd);
             override(p, 'showEventTooBigMessage', onSessionEnd);
 
-            // Hide parts of the interace
+            // Hide parts of the interface
             i$('#playbackControlsStrip,#secondNavStrip,#main-nav,#topbar,#bottomBarStrip').hide();
 
             // Return original method
@@ -79,6 +89,7 @@ angular.module('sessionCamReplayApp')
         // When we get sessions start the randomisation
         var sessionWatch = scope.$watch('sessions', function (newValue) {
           if ( newValue.length > 0 ) {
+            $log.info('session watch');
             loadSession();
             sessionWatch();
           }
