@@ -24,9 +24,6 @@ var all = {
   // Should we populate the DB with sample data?
   seedDB: false,
 
-  // Start a secure server or not (all port numbers everywhere need to be change das well)
-  secure: false,
-
   // Secret for session, you will want to change this and make it an environment variable
   secrets: {
     session: 'session-cam-replay-secret'
