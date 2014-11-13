@@ -5,8 +5,8 @@ function override(object, methodName, callback) {
   object[methodName] = callback(object[methodName])
 }
 function after(extraBehavior) {
-  return function(original) {
-    return function() {
+  return function (original) {
+    return function () {
       var returnValue = original.apply(this, arguments)
       extraBehavior.apply(this, arguments)
       return returnValue
@@ -55,7 +55,7 @@ angular.module('sessionCamReplayApp')
           trailing: false
         });
 
-        var onSessionEnd = after(function() {
+        var onSessionEnd = after(function () {
           $log.info('showSessionPlaybackFinished()');
           throttled();
         });
@@ -64,8 +64,14 @@ angular.module('sessionCamReplayApp')
           frameLoaded: function () {
 
             // Shortcut variables
-            var p = $window.frames[0].sessionCamPlayer;
-            var i$ = $window.frames[0].$;
+            var frame = $window.frames[0];
+            var p = frame.sessionCamPlayer;
+            var i$ = frame.$;
+
+            // Disable the window.alert box which can stop it...
+            frame.window.alert = frame.window.frames[0].window.alert = function (msg) {
+              console.log("Alert: " + msg);
+            };
 
             // Run the original function but return it later..
             var result = p.frameLoaded();
@@ -88,7 +94,7 @@ angular.module('sessionCamReplayApp')
 
         // When we get sessions start the randomisation
         var sessionWatch = scope.$watch('sessions', function (newValue) {
-          if ( newValue.length > 0 ) {
+          if (newValue.length > 0) {
             $log.info('session watch');
             loadSession();
             sessionWatch();
